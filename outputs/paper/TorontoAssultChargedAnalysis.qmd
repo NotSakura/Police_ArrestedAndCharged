@@ -1,0 +1,79 @@
+---
+title: "Police Arrested and Charges Over the Years"
+author: "Shreya Sakura Noskor"
+format: pdf
+---
+```{r}
+#| echo: false
+#| include: false
+#| warning: false
+#| message: false
+
+#The Access token: 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     (DELETEEEEEE)
+
+library(knitr)
+library(janitor)
+library(lubridate)
+library(opendatatoronto)
+library(tidyverse)
+library(readr)
+library(dplyr)
+
+
+##Citation
+citation("knitr")
+citation("ggplot2")
+citation("opendatatoronto")
+citation("ggplot2")
+citation("ggplot2")
+```
+
+
+```{r}
+#| echo: false
+## Cleaning the data
+toronto_arrested <-
+  read_csv(
+    "/cloud/project/inputs/data/rawdata_A&CToronto.csv",
+    show_col_types = FALSE
+  )
+
+toronto_arrested_clean <-
+  clean_names(toronto_arrested) |>
+  select(arrest_year, arrest_count)
+
+#head(toronto_arrested_clean)
+head(toronto_arrested_clean) |> kable()
+```
+
+
+```{r}
+#| echo: false
+## Now add the years for a cleaner data
+data_year <- toronto_arrested_clean |>
+  group_by(arrest_year) |>
+  summarize(arrest_count = sum(arrest_count))
+
+write_csv(
+  x = data_year,
+  file = "/cloud/project/outputs/data/TorontoArrestClean.csv"
+)
+
+#head(data_year)
+data_year |> kable()
+
+```
+
+
+```{r}
+#| echo: false
+ggplot(data_year, aes(x = arrest_year, y = arrest_count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Number of arrests in Toronto (2014-2022)",
+       x = "Year",
+       y = "Number of Arrested Persons") +
+  scale_x_continuous(breaks = seq(min(data_year$arrest_year), max(data_year$arrest_count), by = 1))+
+  theme_minimal()
+
+```
+
