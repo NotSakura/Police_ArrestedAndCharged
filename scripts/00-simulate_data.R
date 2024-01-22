@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Get data on 2021 shelter usage and make table
+# Purpose: Get data on police arrest and charged cases
 # Author: Sakura Noskor
 # Email: sakura.noskor@mail.utoronto.ca
 # Date: 16 January 2024
