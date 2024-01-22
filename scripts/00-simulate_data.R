@@ -11,6 +11,8 @@
 #install.packages("lubridate")
 #install.packages("tidyverse")
 #install.packages("knitr")
+#install.packages("dplyr")
+#install.packages("readr")
 
 #### Simulate data ####
 library(knitr)
@@ -18,3 +20,5 @@ library(janitor)
 library(lubridate)
 library(opendatatoronto)
 library(tidyverse)
+library(readr)
+library(dplyr)
