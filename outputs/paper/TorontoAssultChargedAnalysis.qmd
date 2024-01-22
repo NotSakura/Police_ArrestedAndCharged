@@ -1,8 +1,22 @@
 ---
 title: "Police Arrested and Charges Over the Years"
 author: "Shreya Sakura Noskor"
+date: 01/22/2024
+date-format: long
 format: pdf
+classoption: abstract
+abstract: |
+  With rising rates of crime in Toronto, this paper looks at the trend from 2014 to 2022 of the number of arrests made in the city of Toronto. The paper will also connect the trends seen with the current events of the said year and analyse its findings. In the end, the reader will see the various solutions to aid with the rising crime rates in Toronto.
+include-in-header: 
+  text:
+    \renewcommand{\abstractname}{Abstract}
+
 ---
+
+
+
+
+
 ```{r}
 #| echo: false
 #| include: false
