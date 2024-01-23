@@ -3,6 +3,7 @@ title: "Police Arrested and Charges Over the Years"
 author: "Shreya Sakura Noskor"
 date: 01/22/2024
 date-format: long
+thanks: "Code and data from this paper are available at: https://github.com/NotSakura/Police_ArrestedAndCharged.git"
 format: pdf
 classoption: abstract
 abstract: |
@@ -10,17 +11,17 @@ abstract: |
 include-in-header: 
   text:
     \renewcommand{\abstractname}{Abstract}
-#bibliography: references.bib
+bibliography: ref.bib
 ---
-###################ADD TESTs
+
 
 # Introduction
 
 Toronto is a booming mega-city with a population of well over 3 million. In recent years there has been increased fear in the city about the rise in crime rates. Crimes ranging from homicide to public disturbance to illegal drug distribution has lead to increased arrests and charges being laid by the Toronto Police. According to major news outlets it seems that Torontonians feel crime rates are much higher than usual, making them feel unsafe in their own homes. 
 
-Fortunatly, the city of toronto compiles the data from 2014 to 2022 with the total number of arrests were made in each ward and what their charges were. A ward is a geographical regional divison, a division created by the city of Toronto to partition the city into managable districts that each have their own represntative to represent them in city hall. There are 44 wards as of 2020. Now each ward has several police departments. When police officers are called to a criminal activity in their wardand they make an arrest they are required to provide reason for that arrest. These are called charges. They can range from damage to person or property, theft, illegal drug abuse and more. As a reminder, arrest is very different from jailed. To be arrested means some one is detained from the scene by police while being jailed means perpretraitor is kept in a confined cell. One can be arrested without being jailed. Other mega cities like Vancouver (CTV news) also seem to be suffereing the same fate of increased crime rates. 
+Fortunately, the city of Toronto compiles the data from 2014 to 2022 with the total number of arrests were made in each ward and what their charges were. A ward is a geographical regional division, a division created by the city of Toronto to partition the city into manageable districts that each have their own representative to represent them in city hall. There are 44 wards as of 2020. Now each ward has several police departments. When police officers are called to a criminal activity in their ward and they make an arrest they are required to provide reason for that arrest. These are called charges. They can range from damage to person or property, theft, illegal drug abuse and more. As a reminder, arrest is very different from jailed. To be arrested means some one is detained from the scene by police while being jailed means perpetrator is kept in a confined cell. One can be arrested without being jailed. Other mega cities like Vancouver (CTV news) also seem to be suffering the same fate of increased crime rates. 
 
-To analyse if Toronto has really had an increase crime rates, this paper will be looking at arrest count from the years 2014 to 2022 and if the trends reflect any political or current events going on in the city. This paper is organised into Introduction, Data, Results, and Discussion/Conclusion. The data section will go through step by step the methods followed to organise and clean the data and the result section will output the same data for quantitative analysis such as looking at trends in terms of numbers. The Discussion section will cover the quaitative analysis of what is going with the data as well as connections for said data. Conclusions will be provided as well.
+To analyse if Toronto has really had an increase crime rates, this paper will be looking at arrest count from the years 2014 to 2022 and if the trends reflect any political or current events going on in the city. This paper is organised into Introduction, Data, Results, and Discussion/Conclusion. The data section will go through step by step the methods followed to organised and clean the data and the result section will output the same data for quantitative analysis such as looking at trends in terms of numbers. The Discussion section will cover the qualitative analysis of what is going with the data as well as connections for said data. Conclusions will be provided as well.
 
 
 
@@ -35,7 +36,6 @@ To analyse if Toronto has really had an increase crime rates, this paper will be
 
 library(knitr)
 library(janitor)
-library(lubridate)
 library(opendatatoronto)
 library(tidyverse)
 library(readr)
@@ -46,26 +46,28 @@ library(dplyr)
 citation("knitr")
 citation("ggplot2")
 citation("opendatatoronto")
-citation("ggplot2")
-citation("ggplot2")
+citation("tidyverse")
 ```
 # Data
 We will be examining in this section how the data was cleaned up in torder to display the desired results accuratly.
 
-First was loading the initial raw data from Open Data Portal provided by the city of Toronto. This data set is titled "Toronto Police Report - Number of Aressted and Charged Person". Data was cleaned and analysed in R (cite) by various helpful packages like, knitr, janitor, lubricate, opendatatoronto, tidyverse, readr, dplyr.
+First was loading the initial raw data from Open Data Portal provided by the city of Toronto[@OpenData]. This data set is titled "Toronto Police Report - Number of Arrested and Charged Person". Data was cleaned and analysed in R[@citeR] by various helpful packages like, knitr[@rknitr], janitor[@rJanitor], tidyverse[@tidyverse], readr[@rReadr], dplyr[@rDplyr].
 
 ## Contents of Raw Data Set
-
-Can see the different charges. Also notice that each is divided by neighbour hoot so hard to tell if a specific police department is a problem in the crime rates.
+Thr raw data consists of 10 colomns: Year, Division, Hood, neighborhood, Sex, Age, Age Group, category, sub type and arrest count. year is the year the arrest was made. Division represents the ward and hood/neighborhood represents the neighborhood within each individual ward. Age and age group tell us the age and whether they are youth, adult or senior. Category is the charges they were arrested for and sub type tells us more specifically what the charges were for. For example if the category says "Crimes against Property" then the sub type will tell us if its is theft or vandalism or other. The arrest count is the column that this paper will focus on which represents the number of arrests made that year in a particular neighborhood for a specific crimes. Future sections will cover what studies can be done with the rest of the data. Other datasets could have been used but they would not be more credible or complete as this dataset as this dataset shows the catagories very throughly and this list was made by the city of Toronto from the reports that TPS(Toronto Police Service) provide. 
 
 ## Cleaned Data
-how i cleaned the data and the choices i made and why. The Arrest year reoresnts the year and the arrest count represnets the number of person arrested regardless or age, neighbourhood and the type of charge. Hense the unit is number of person. Didn't take average because the average would represnt the average arrest accross the type of assult and under this paper's context it doesn't make. 
+how i cleaned the data and the choices i made and why. The Arrest year represents the year and the arrest count represents the number of person arrested regardless or age, neighborhood and the type of charge. Hence the unit is number of person. Didn't take average because the average would represent the average arrest accross the type of assault and under this paper's context it doesn't make. 
+
+Cleaned the data by first reading it in and calling `clean_names()` from package janitor [@rJanitor] to clean up the names in the data set. Then using `select()` from dplyr [@rDplyr], I choose the 2 coloumns I want the most; arrest_year and arrest_count. Out putting it into a table we get the following table resulting in a table that tells us the year and the arrest count but the data is still partially unclean as the years need to be summed together.  
 
 
 
 
 ```{r}
 #| echo: false
+#| label: partial_cleaned_data
+#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by catagory
 ## Cleaning the data
 toronto_arrested <-
   read_csv(
@@ -75,16 +77,18 @@ toronto_arrested <-
 
 toronto_arrested_clean <-
   clean_names(toronto_arrested) |>
-  select(arrest_year, arrest_count)
+  select(arrest_year, category, arrest_count)
 
 #head(toronto_arrested_clean)
 head(toronto_arrested_clean) |> kable()
 ```
 
-
+Instead took the data and added up the arrest count through out the different categories allowing for a total count using `group_by` from janitor [@rJanitor], and `summarise()`from dylpr[@rDplyr] and `sum()` from R [@citeR]. This was necessary as this allowed the data to actually show relevant information. Taking ana average in this case would not have made sense as it would show what the average arrest count across the different categories is. This would not aid in this papers purpose of comparing the arrest rates in Toronto through out the years.
 
 ```{r}
 #| echo: false
+#| label: tb2-cleaned_data
+#| tb2-cap: Total arrested in Toronto from 2014, 2022
 ## Now add the years for a cleaner data
 data_year <- toronto_arrested_clean |>
   group_by(arrest_year) |>
@@ -96,14 +100,14 @@ write_csv(
 )
 
 #head(data_year)
-data_year |> kable()
+data_year |> kable(format = "pipe", padding = 2, col.names = c("Year", "Arrest Count"))
 
 ```
 
 # Result
 
 ## Crime rates graphed
-
+The aim of this paper is to analyse the arrest count from the year 2014 to 2022 which is why a bar graph was made with the values from the table seen above.
 ```{r}
 #| echo: false
 ggplot(data_year, aes(x = arrest_year, y = arrest_count)) +
@@ -115,7 +119,7 @@ ggplot(data_year, aes(x = arrest_year, y = arrest_count)) +
   theme_minimal()
 
 ```
-We notice from the graph above that there is a steady decline from 2019 to 2021 until 2022 when it pics back up again. --Write numbers--.
+We notice from the graph above that there is a steady decline from 2019 to 2021 until 2022 when it starts to slowly increase again. Notice that in 2014 we start off with a very large arrest count, 80859 arrests made in 2014. However, the years after ward we decrease to 71480 people arrested and it stays constant for a 3 years until we end up in 2018 and 2019 where it decreases again to make the total number of arrests to approximately, 67000 people. In 2020, the graph shows a local minimum where 53180 people were arrested. After the 2020 mark we see gradual increase in 2021 and 2022 with 54532 and 64243 people being arrested per year respectively. 
 
 ## Quantitative Analysis
 We will be taking the average rate of change to calulate the rate of change of crime rates for each year. The units are number of crimes/per year
@@ -126,29 +130,33 @@ $$
 With this operation we get the following table:
 ```{r}
 #| echo: false
-
-
-###############TRY THISSS##########
-aroc <- diff(data_year$arrest_count) / data_year$arrest_count[-length(data_year$arrest_count)]
+#| label: tb3-rate_of_change
+#| tb2-cap: Rate of chnage for Number of Arrest in Toronto from 2014, 2022
+aroc <- diff(data_year$arrest_count) # because the difference in year is 1 so makes no difference
+aroc_percent <- round( (diff(data_year$arrest_count) / data_year$arrest_count[-length(data_year$arrest_count)] * 100) , digits = 2)
 x <- c("2014~2015","2015~2016","2016~2017","2017~2018","2018~2019","2019~2020","2020~2021","2021~2022")
 aroc_year <- data.frame(year = x, aroc = aroc)
 
 aroc_year |> kable()
-```
 
+data.frame(year = x, percentage = aroc_percent) |> kable()
+```
+We see that the rate of change shows the trend described in previous section. Where the we have a decrese in the number of arrests made in years 2015, 2017, 2018, 2019, 2020. While we have a positive rate of chnage in other years showing that arrest count has increased in those years. We see that there is an 11% decrease in crime form 2014 to 2015 and almost 20% decrease from 2019-2020. The highest increase in crime that is shown is in the years 2021-2022 with a 17.81% increase. 
 
 # Discussion/Conclusion
 
 ## Discussion
-First we will analyse the graph. From the graph and table(link) it can be seen that the number of arrest count starts of very high in 2014. This it relativly stays the same until 2019 and more evidently in 2020 with #. This data reveals that the decrease was coincidentalyy during covid 19 pandemic. This was time where lockdown and staying home was mandatory or strongly advised. This pandemic striked a fear in Torontotnians hence people could not leave home. This can be a reason as to why the number was so low. From the rate of change table (link_________) we see that the highest rate of chnage is during the years ______.
+First we will analyse the graph. From the graph and table(link) it can be seen that the number of arrest count starts of very high in 2014. This it relatively stays the same until 2019 and more evidently in 2020 with #. This data reveals that the decrease was coincidentally during covid 19 pandemic. This was time where lock down and staying home was mandatory or strongly advised. This pandemic striked a fear in Torontonians hence people could not leave home. This can be a reason as to why the number was so low. From the rate of change table above we see that the highest rate of change is during the years 2019-2020 where we have a decrease of 13208 arrests that year. 
 
-One may also say that the increase in 911 emergency respontime may cobute to the statistic above. According to CTV news, Toorntonians are not getting the emergency services like security from the toronto police department in time. It is unclear from this data set whether the rise in crime rates influence the responce time or if the slow responce time results in a higher crime rate as police assistance is not there to deescalate a situation leading to larger charges and more arrests. 
+One may also say that the increase in 911 emergency response time may contribute to the statistic above. According to CTV news, Torontonians are not getting the emergency services like security from the Toronto police department in time. It is unclear from this data set whether the rise in crime rates influence the response time or if the slow response time results in a higher crime rate as police assistance is not there to deescalate a situation leading to larger charges and more arrests. 
 
-Errors and oversights in this test however is that many of the charges were grouped together menaing that the arrest count represnts the total nnumber of arrests accross all chnarges. This means subject small charges such as theft and vandalism gets grouped with subjectivly bigger crimes such as homicide or illegal drug distribution. Another error is that this data doesn't show wether the charges are true or not. This means at the scene a person could have been charged and arrested but later in trial they see that it was a misunderstanding and the person is innocent (cite the police website______). The police still report the arrest but it doesn't increase the crime rate as crime has not been commited in this case. Many of the data sets have theft or property damage as a charge so, this data being inaccurate represenatation of crime rates in Toronto.
+Errors and oversights in this test however is that many of the charges were grouped together meaning that the arrest count represents the total number of arrests accross all charges. This means subject small charges such as theft and vandalism gets grouped with subjectively bigger crimes such as homicide or illegal drug distribution. Another error is that this data doesn't show whether the charges are true or not. This means at the scene a person could have been charged and arrested but later in trial they see that it was a misunderstanding and the person is innocent (cite the police website______). The police still report the arrest but it doesn't increase the crime rate as crime has not been commited in this case. Many of the data sets have theft or property damage as a charge so, this data being inaccurate representation of crime rates in Toronto.
 
 ##Conclusion
-In conclusion, this data set after cleaned up shows the number of arrests made by police in Toronto from year 2014 to 2022. As arrests are made due to charges being brought on person at a scene of crime, this data set contributes to the analysis of the crime rates in Toronto, if not represent it. They effectivly show that current events do infact affect the arrest rates in toronto however events such as budget increases in 2020 to 2022 did not reduce the rate of crime but increase it(link_____).  This was unexpected as the budget presenattion highlighted the fact that they had requested more money to hire more officers to keep the city of Toronto safe. For a future study one that focuses more on district and teh different assult charges may be benificial. The results from said study will help see which heighbourhood is relativly safer than the other and what they are doing differently in order to ensure the safety of Torontonians. With continous increasing population our only solution from this study that effectivly worked has been a lockdown; neither ideal nor welcome again. This means that budgeting is not the only solution but this problem requires more community-municipality cooperation and involvement. 
+In conclusion, this data set after cleaned up shows the number of arrests made by police in Toronto from year 2014 to 2022. As arrests are made due to charges being brought on person at a scene of crime, this data set contributes to the analysis of the crime rates in Toronto, if not represent it. They effectively show that current events do infact affect the arrest rates in Toronto however events such as budget increases in 2020 to 2022 did not reduce the rate of crime but increase it(link_____).  This was unexpected as the budget presentation highlighted the fact that they had requested more money to hire more officers to keep the city of Toronto safe. For a future study one that focuses more on district and the different assault charges may be beneficial. The results from said study will help see which neighborhood is relatively safer than the other and what they are doing differently in order to ensure the safety of Torontonians With continuous increasing population our only solution from this study that effectively worked has been a lock down; neither ideal nor welcome again. This means that budgeting is not the only solution but this problem requires more community-municipality cooperation and involvement. 
 
 
+
+## References
 
 

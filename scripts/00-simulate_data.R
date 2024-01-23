@@ -8,7 +8,6 @@
 #### Workspace setup ####
 #install.packages("opendatatoronto")
 #install.packages("janitor")
-#install.packages("lubridate")
 #install.packages("tidyverse")
 #install.packages("knitr")
 #install.packages("dplyr")
@@ -17,7 +16,6 @@
 #### Simulate data ####
 library(knitr)
 library(janitor)
-library(lubridate)
 library(opendatatoronto)
 library(tidyverse)
 library(readr)
