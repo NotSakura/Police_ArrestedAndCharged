@@ -1,16 +1,15 @@
-# Starter folder
+# Toronto Arrest rates from 2014-2022
 
-## Overview
+## Abstract
 
-This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
+With rising rates of crime in Toronto, this paper looks at thetrend from 2014 to 2022 of the number of arrests made in the cityof Toronto. The paper will also connect the trends seen with thecurrent events of the said year and analyse its findings. In the end,the reader will see the various solutions to aid with the rising crimerates in Toronto.
 
-To use this folder, click the green "Code" button", then "Download ZIP". Move the downloaded folder to where you want to work on your own computer, and then modify it to suit.
+**Statement on LLM usage: ChatGPT was used to find solutions to errors that was not showcased in the textbook or found online. Such errors include indexing errors while graphing and library not being installed
 
 ## File Structure
 
 The repo is structured as:
 
--   `input/data` contains the data sources used in analysis including the raw data.
--   `outputs/data` contains the cleaned dataset that was constructed.
--   `outputs/paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
--   `scripts` contains the R scripts used to simulate, download and clean data.
+-   `input/data` contains the raw data
+-   `outputs/paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. It also contains the cleaned data.
+-   `scripts` contains the R scripts used to simulate and download the data.
