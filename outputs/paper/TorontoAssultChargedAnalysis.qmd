@@ -77,7 +77,7 @@ toronto_arrested <-
 
 toronto_arrested_clean <-
   clean_names(toronto_arrested) |>
-  select(arrest_year, category, arrest_count)
+  select(arrest_year, category, subtype, arrest_count)
 
 #head(toronto_arrested_clean)
 head(toronto_arrested_clean) |> kable()
@@ -101,6 +101,25 @@ write_csv(
 
 #head(data_year)
 data_year |> kable(format = "pipe", padding = 2, col.names = c("Year", "Arrest Count"))
+
+```
+
+```{r}
+#| echo: false
+#| label: tb3-grouped by category
+#| tb2-cap: Total arrested in by type of charge Toronto from 2014, 2022
+## Now add the years for a cleaner data
+data_cat <- toronto_arrested_clean |>
+  group_by(subtype) |>
+  summarize(arrest_count = sum(arrest_count))
+
+write_csv(
+  x = data_cat,
+  file = "/cloud/project/outputs/data/TorontoArrestCleanbyCategory.csv"
+)
+
+#head(data_year)
+data_cat |> kable(format = "pipe", padding = 2, col.names = c("Category", "Arrest Count"))
 
 ```
 
