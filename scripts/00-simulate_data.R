@@ -3,7 +3,7 @@
 # Author: Sakura Noskor
 # Email: sakura.noskor@mail.utoronto.ca
 # Date: 16 January 2024
-# Prerequisites: -
+# Prerequisites: Must have raw data already installed
 
 #### Workspace setup ####
 #install.packages("opendatatoronto")

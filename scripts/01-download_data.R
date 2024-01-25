@@ -11,12 +11,16 @@
 #install.packages("janitor")
 #install.packages("tidyverse")
 #install.packages("knitr")
+#install.packages("dplyr")
+#install.packages("readr")
 
 #### Simulate data ####
 library(knitr)
 library(janitor)
 library(opendatatoronto)
 library(tidyverse)
+library(readr)
+library(dplyr)
 
 
 resources <- list_package_resources("police-annual-statistical-report-arrested-and-charged-persons")
