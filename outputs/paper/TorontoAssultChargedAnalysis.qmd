@@ -1,5 +1,5 @@
 ---
-title: "Police Arrested and Charges Over the Years"
+title: "Police Arrested and Associated Charges Over the Years in Toronto: Analysing and Connecting"
 author: "Shreya Sakura Noskor"
 date: 01/22/2024
 date-format: long
@@ -7,11 +7,14 @@ thanks: "Code and data from this paper are available at: https://github.com/NotS
 format: pdf
 classoption: abstract
 abstract: |
-  With rising rates of crime in Toronto, this paper looks at the trend from 2014 to 2022 of the number of arrests made in the city of Toronto. The paper will also connect the trends seen with the current events of the said year and analyse its findings. In the end, the reader will see the various solutions to aid with the rising crime rates in Toronto.
+  With rising rates of crime in Toronto, this paper looks at the trend from 2014 to 2022 of the number of arrests as well as where the arrests took place in the city of Toronto. The paper will also connect the trends seen with the current events of the said year and analyse its findings. In the end, this paper will highlight the ideas of increasing crime rate and the rates we see through out the paper. The results show that pandemic affected the number of arrests as well as which neighbourhood is safest.
 include-in-header: 
   text:
     \renewcommand{\abstractname}{Abstract}
 bibliography: ref.bib
+toc: true
+toc-depth: 2
+number-sections: true
 ---
 
 
@@ -30,9 +33,6 @@ To analyse if Toronto has really had an increase crime rates, this paper will be
 #| include: false
 #| warning: false
 #| message: false
-
-#The Access token: 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
-
 
 library(knitr)
 library(janitor)
@@ -56,17 +56,13 @@ First was loading the initial raw data from Open Data Portal provided by the cit
 ## Contents of Raw Data Set
 Thr raw data consists of 10 colomns: Year, Division, Hood, neighborhood, Sex, Age, Age Group, category, sub type and arrest count. year is the year the arrest was made. Division represents the ward and hood/neighborhood represents the neighborhood within each individual ward. Age and age group tell us the age and whether they are youth, adult or senior. Category is the charges they were arrested for and sub type tells us more specifically what the charges were for. For example if the category says "Crimes against Property" then the sub type will tell us if its is theft or vandalism or other. The arrest count is the column that this paper will focus on which represents the number of arrests made that year in a particular neighborhood for a specific crimes. Future sections will cover what studies can be done with the rest of the data. Other datasets could have been used but they would not be more credible or complete as this dataset as this dataset shows the catagories very throughly and this list was made by the city of Toronto from the reports that TPS(Toronto Police Service) provide. 
 
-## Cleaned Data
-how i cleaned the data and the choices i made and why. The Arrest year represents the year and the arrest count represents the number of person arrested regardless or age, neighborhood and the type of charge. Hence the unit is number of person. Didn't take average because the average would represent the average arrest accross the type of assault and under this paper's context it doesn't make. 
-
-Cleaned the data by first reading it in and calling `clean_names()` from package janitor [@rJanitor] to clean up the names in the data set. Then using `select()` from dplyr [@rDplyr], I choose the 2 coloumns I want the most; arrest_year and arrest_count. Out putting it into a table we get the following table resulting in a table that tells us the year and the arrest count but the data is still partially unclean as the years need to be summed together.  
-
-
+## Snippet of cleaned data
+Through out the later sections, there will be more specific graphs that explicitly show the connection between each sub-category and number of arrests made such as year, neighbourhood, charges and sex. In this small sub-section is shown a small snippet (@tbl-modelresults) of all the independent variables (year, neighborhood, charges, sex) together with the dependent variable (arrest count). In the discussion section we will take these results and show that arrest count in fact is a dependent variable.
 
 
 ```{r}
 #| echo: false
-#| label: partial_cleaned_data
+#| label: tbl-modelresults
 #| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by catagory
 ## Cleaning the data
 toronto_arrested <-
@@ -77,18 +73,20 @@ toronto_arrested <-
 
 toronto_arrested_clean <-
   clean_names(toronto_arrested) |>
-  select(arrest_year, category, subtype, arrest_count)
+  select(arrest_year, category, subtype, neighbourhood_158, arrest_count)
 
 #head(toronto_arrested_clean)
 head(toronto_arrested_clean) |> kable()
 ```
 
-Instead took the data and added up the arrest count through out the different categories allowing for a total count using `group_by` from janitor [@rJanitor], and `summarise()`from dylpr[@rDplyr] and `sum()` from R [@citeR]. This was necessary as this allowed the data to actually show relevant information. Taking ana average in this case would not have made sense as it would show what the average arrest count across the different categories is. This would not aid in this papers purpose of comparing the arrest rates in Toronto through out the years.
+## Year vs Arrest Count
+
+
 
 ```{r}
 #| echo: false
-#| label: tb2-cleaned_data
-#| tb2-cap: Total arrested in Toronto from 2014, 2022
+#| label: tbl-modelresults2
+#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by catagory
 ## Now add the years for a cleaner data
 data_year <- toronto_arrested_clean |>
   group_by(arrest_year) |>
@@ -103,14 +101,40 @@ write_csv(
 data_year |> kable(format = "pipe", padding = 2, col.names = c("Year", "Arrest Count"))
 
 ```
+## Neighbourhood vs Arrest Count
+
+
 
 ```{r}
 #| echo: false
-#| label: tb3-grouped by category
-#| tb2-cap: Total arrested in by type of charge Toronto from 2014, 2022
+#| label: tbl-ward
+#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by neighbourhood/ward
 ## Now add the years for a cleaner data
+data_ward <- toronto_arrested_clean |>
+  group_by(neighbourhood_158) |>
+  summarize(arrest_count = sum(arrest_count))
+
+write_csv(
+  x = data_year,
+  file = "/cloud/project/outputs/data/TorontoArrestCleanByWard.csv"
+)
+
+#head(data_year)
+head(data_ward) |> kable(format = "pipe", padding = 2, col.names = c("Ward", "Arrest Count"))
+
+```
+## Catagory and Subtype Vs Arrest Count
+```{r}
+#| echo: false
+#| label: tbl-modelresults3
+#| tbl-cap: catagory and Subtype Vs Arrest Count
+#| tbl-subcap:
+#| - "Category "
+#| - "Subtype "
+#| layout-ncol: 1 
+## Now add the category for a cleaner data
 data_cat <- toronto_arrested_clean |>
-  group_by(subtype) |>
+  group_by(category) |>
   summarize(arrest_count = sum(arrest_count))
 
 write_csv(
@@ -118,10 +142,24 @@ write_csv(
   file = "/cloud/project/outputs/data/TorontoArrestCleanbyCategory.csv"
 )
 
-#head(data_year)
+# add by subtype
+data_sub <- toronto_arrested_clean |>
+  group_by(subtype) |>
+  summarize(arrest_count = sum(arrest_count))
+
+write_csv(
+  x = data_cat,
+  file = "/cloud/project/outputs/data/TorontoArrestCleanbySubtype.csv"
+)
+
 data_cat |> kable(format = "pipe", padding = 2, col.names = c("Category", "Arrest Count"))
+data_sub |> kable(format = "pipe", padding = 2, col.names = c("Subtype", "Arrest Count")) #too big
 
 ```
+
+
+
+
 
 # Result
 
@@ -129,6 +167,8 @@ data_cat |> kable(format = "pipe", padding = 2, col.names = c("Category", "Arres
 The aim of this paper is to analyse the arrest count from the year 2014 to 2022 which is why a bar graph was made with the values from the table seen above.
 ```{r}
 #| echo: false
+#| label: arrest/year
+#| fig-cap: Realting arrest count with arrest 
 ggplot(data_year, aes(x = arrest_year, y = arrest_count)) +
   geom_bar(stat = "identity") +
   labs(title = "Number of arrests in Toronto (2014-2022)",
