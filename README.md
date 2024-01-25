@@ -4,7 +4,7 @@
 
 With rising rates of crime in Toronto, this paper looks at thetrend from 2014 to 2022 of the number of arrests made in the cityof Toronto. The paper will also connect the trends seen with thecurrent events of the said year and analyse its findings. In the end,the reader will see the various solutions to aid with the rising crimerates in Toronto.
 
-**Statement on LLM usage: ChatGPT was used to find solutions to errors that was not showcased in the textbook or found online. Such errors include indexing errors while graphing and library not being installed
+**Statement on LLM usage: ChatGPT was used to find solutions to errors that was not showcased in the textbook or found online. Such errors include indexing errors while graphing and library not being installed. Full chat transcript here: https://chat.openai.com/share/5adea0f3-d581-4632-ab2a-08926f7b914f
 
 ## File Structure
 
