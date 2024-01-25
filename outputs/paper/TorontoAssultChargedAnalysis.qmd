@@ -117,7 +117,7 @@ There are a total of 140 wards in the city of Toronto. Within each ward there ar
 ```{r}
 #| echo: false
 #| label: tbl-div
-#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by neighbourhood
+#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by division
 ## Now add the years for a cleaner data
 data_div <- toronto_arrested_clean |>
   group_by(division) |>
@@ -211,7 +211,7 @@ ggplot(data_cat, aes(x = category, fill = subtype)) +
   geom_bar() +
   labs(title = "Number of arrests in Toronto by Charge Category",
        x = "Charge",
-       y = "Number of Arrested Persons", 
+       y = "Number of Arrested Persons (x10000)", 
        fill = "Subtypes") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 20, vjust = 1, hjust = 1, size = 6),
