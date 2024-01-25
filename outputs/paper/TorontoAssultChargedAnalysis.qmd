@@ -123,6 +123,8 @@ write_csv(
 head(data_ward) |> kable(format = "pipe", padding = 2, col.names = c("Ward", "Arrest Count"))
 
 ```
+
+
 ## Catagory and Subtype Vs Arrest Count
 ```{r}
 #| echo: false
