@@ -12,6 +12,8 @@
 #install.packages("knitr")
 #install.packages("dplyr")
 #install.packages("readr")
+#install.packages("kableExtra")
+
 
 #### Simulate data ####
 library(knitr)
@@ -20,6 +22,8 @@ library(opendatatoronto)
 library(tidyverse)
 library(readr)
 library(dplyr)
+library(kableExtra)
+
 
 # Set seed for reproducibility as referenced in textbook
 set.seed(853)

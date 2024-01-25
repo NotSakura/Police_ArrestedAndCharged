@@ -1,8 +1,24 @@
-category,arrest_count
-Controlled Drugs and Substances Act,22700
-Crimes Against Property,112786
-Crimes Against the Person,119177
-Criminal Code Traffic,10589
-Other Criminal Code Violations,107395
-Other Federal Statute Violations,28
-Total Arrests,230024
+category,subtype,arrest_count
+Controlled Drugs and Substances Act,Other,22700
+Crimes Against Property,Break and Enter,8746
+Crimes Against Property,Fraud,8256
+Crimes Against Property,Other,48958
+Crimes Against Property,Theft Over $5000,1169
+Crimes Against Property,Theft Under $5000,45657
+Crimes Against the Person,Assaults,73771
+Crimes Against the Person,Attempted Murder,497
+Crimes Against the Person,Firearm-Related,1752
+Crimes Against the Person,Other,27943
+Crimes Against the Person,Robbery,8068
+Crimes Against the Person,Sexual Violations,7146
+Criminal Code Traffic,Dangerous Driving,1386
+Criminal Code Traffic,Drive While Disqualified,939
+Criminal Code Traffic,Drive While Impaired / Over 80,5672
+Criminal Code Traffic,Fail to Remain,564
+Criminal Code Traffic,Other,382
+Criminal Code Traffic,Refuse Sample,1646
+Other Criminal Code Violations,Firearm-Related,5033
+Other Criminal Code Violations,Other,87750
+Other Criminal Code Violations,Other Criminal Violations - Offensive Weapons,14612
+Other Federal Statute Violations,Other,28
+Total Arrests,Total Arrests,230024

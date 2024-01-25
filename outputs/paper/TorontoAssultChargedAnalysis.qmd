@@ -13,8 +13,13 @@ include-in-header:
     \renewcommand{\abstractname}{Abstract}
 bibliography: ref.bib
 toc: true
-toc-depth: 2
+toc-depth: 3
 number-sections: true
+margins:
+  top: 0.5in
+  bottom: 0.5in
+  left: 0.5in
+  right: 0.5in
 ---
 
 
@@ -40,6 +45,8 @@ library(opendatatoronto)
 library(tidyverse)
 library(readr)
 library(dplyr)
+library(kableExtra)
+
 
 
 ##Citation
@@ -51,19 +58,19 @@ citation("tidyverse")
 # Data
 We will be examining in this section how the data was cleaned up in torder to display the desired results accuratly.
 
-First was loading the initial raw data from Open Data Portal provided by the city of Toronto[@OpenData]. This data set is titled "Toronto Police Report - Number of Arrested and Charged Person". Data was cleaned and analysed in R[@citeR] by various helpful packages like, knitr[@rknitr], janitor[@rJanitor], tidyverse[@tidyverse], readr[@rReadr], dplyr[@rDplyr].
+First was loading the initial raw data from Open Data Portal provided by the city of Toronto[@OpenData]. This data set is titled "Toronto Police Report - Number of Arrested and Charged Person". Data was cleaned and analysed in R[@citeR] by various helpful packages like, knitr[@rknitr], janitor[@rJanitor], tidyverse[@tidyverse], readr[@rReadr], dplyr[@rDplyr], and kableExtra[@rExtra] .
 
 ## Contents of Raw Data Set
 Thr raw data consists of 10 colomns: Year, Division, Hood, neighborhood, Sex, Age, Age Group, category, sub type and arrest count. year is the year the arrest was made. Division represents the ward and hood/neighborhood represents the neighborhood within each individual ward. Age and age group tell us the age and whether they are youth, adult or senior. Category is the charges they were arrested for and sub type tells us more specifically what the charges were for. For example if the category says "Crimes against Property" then the sub type will tell us if its is theft or vandalism or other. The arrest count is the column that this paper will focus on which represents the number of arrests made that year in a particular neighborhood for a specific crimes. Future sections will cover what studies can be done with the rest of the data. Other datasets could have been used but they would not be more credible or complete as this dataset as this dataset shows the catagories very throughly and this list was made by the city of Toronto from the reports that TPS(Toronto Police Service) provide. 
 
 ## Snippet of cleaned data
-Through out the later sections, there will be more specific graphs that explicitly show the connection between each sub-category and number of arrests made such as year, neighbourhood, and charges. In this small sub-section is shown a small snippet (@tbl-modelresults) of all the independent variables (year, neighborhood, charges) together with the dependent variable (arrest count). In the discussion section we will take these results and show that arrest count in fact is a dependent variable.
+Through out the later sections, there will be more specific graphs that explicitly show the connection between each sub-category and number of arrests made such as year, division, and charges. In this small sub-section is shown a 6 row snippet (@tbl-summary) of all the independent variables (year, division, charges) together with the dependent variable (arrest count). In the discussion section we will take these results and show that arrest count in fact is a dependent variable.
 
 
 ```{r}
 #| echo: false
-#| label: tbl-modelresults
-#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by catagory
+#| label: tbl-summary
+#| tbl-cap: Summary of data with independent variables, year, category, subtype, and division
 ## Cleaning the data
 toronto_arrested <-
   read_csv(
@@ -73,19 +80,20 @@ toronto_arrested <-
 
 toronto_arrested_clean <-
   clean_names(toronto_arrested) |>
-  select(arrest_year, category, subtype, neighbourhood_158, arrest_count)
+  select(arrest_year, category, subtype, division, arrest_count)
 
 #head(toronto_arrested_clean)
-head(toronto_arrested_clean) |> kable()
+head(toronto_arrested_clean) |> kable(col.names = c("Year", "Charges", "Subtype", "Division", "Arrest Count")) |>
+  kable_styling(position = "center", font_size = 10)
 ```
 
 ## Year vs Arrest Count
 
-
+The table below (@tbl-year) shows the total number of arrests made for each year, starting from 2014 to 2022. This data is important as there are major events occurring during this time period that allows us to see what current events affect the arrest rate. The Arrest Count colomn was obtained by grouping the years together and summing the values of the arrest count.
 
 ```{r}
 #| echo: false
-#| label: tbl-modelresults2
+#| label: tbl-year
 #| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by catagory
 ## Now add the years for a cleaner data
 data_year <- toronto_arrested_clean |>
@@ -101,42 +109,41 @@ write_csv(
 data_year |> kable(format = "pipe", padding = 2, col.names = c("Year", "Arrest Count"))
 
 ```
-## Neighbourhood vs Arrest Count
 
+## Division vs Arrest Count
+There are a total of 140 wards in the city of Toronto. Within each ward there are smaller neighbourhoods where there are police departments in each neighbourhood. However, this data set (@tbl-div) looks at each division in the city as the Toronto Police Service has an office for each of these divisions. Arrest count represents the accumulated arrest count from the raw data set however, this time grouped by divsion to graph a better comparison graph. NSA are the edge cases where an arrest was made but not by the division, persumably OPP or some other police. 
 
 
 ```{r}
 #| echo: false
-#| label: tbl-ward
-#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by neighbourhood/ward
+#| label: tbl-div
+#| tbl-cap: Total arrested in Toronto from 2014, 2022 divided by neighbourhood
 ## Now add the years for a cleaner data
-data_ward <- toronto_arrested_clean |>
-  group_by(neighbourhood_158) |>
+data_div <- toronto_arrested_clean |>
+  group_by(division) |>
   summarize(arrest_count = sum(arrest_count))
 
 write_csv(
   x = data_year,
-  file = "/cloud/project/outputs/data/TorontoArrestCleanByWard.csv"
+  file = "/cloud/project/outputs/data/TorontoArrestCleanByDiv.csv"
 )
 
-#head(data_year)
-head(data_ward) |> kable(format = "pipe", padding = 2, col.names = c("Ward", "Arrest Count"))
+
+data_div |> kable(format = "pipe", padding = 2, col.names = c("Division", "Arrest Count"))
 
 ```
 
 
-## Catagory and Subtype Vs Arrest Count
+## Category and Subtype Vs Arrest Count
+In the research topic for this paper, knowing the different Charges that people get arrested for is important. This table (@tbl-cat) shows the different charges that people in Toronto got arrested for in the years 2014-2022. The arrest count coloumn was replaced by cumulative count where they were grouped by charges and the subtype of charges. The charges include Crimes against person/property, Controlled Drugs and Substances Act and others. The subtypes represent more information on the charge so if someon was arrested for Crimes against property their sub type maybe vandalism, break and enter or other. We will combine the data to show it in a more understanding way. The table printed is a sample as the actual data set is too large to output however, this paper will show the results in a more visual way without overcrowding it with numbers. 
 ```{r}
 #| echo: false
-#| label: tbl-modelresults3
-#| tbl-cap: catagory and Subtype Vs Arrest Count
-#| tbl-subcap:
-#| - "Category "
-#| - "Subtype "
-#| layout-ncol: 1 
+#| warning: false
+#| label: tbl-cat
+#| tbl-cap: catagory Vs Arrest Count
 ## Now add the category for a cleaner data
 data_cat <- toronto_arrested_clean |>
-  group_by(category) |>
+  group_by(category, subtype) |>
   summarize(arrest_count = sum(arrest_count))
 
 write_csv(
@@ -144,18 +151,11 @@ write_csv(
   file = "/cloud/project/outputs/data/TorontoArrestCleanbyCategory.csv"
 )
 
-# add by subtype
-data_sub <- toronto_arrested_clean |>
-  group_by(subtype) |>
-  summarize(arrest_count = sum(arrest_count))
 
-write_csv(
-  x = data_cat,
-  file = "/cloud/project/outputs/data/TorontoArrestCleanbySubtype.csv"
-)
+head(data_cat) |> kable(format = "pipe", padding = 3, col.names = c("Category","Subtype", "Arrest Count")) |>
+  kable_styling(font_size = 5) 
 
-data_cat |> kable(format = "pipe", padding = 2, col.names = c("Category", "Arrest Count"))
-data_sub |> kable(format = "pipe", padding = 2, col.names = c("Subtype", "Arrest Count")) #too big
+
 
 ```
 
@@ -165,12 +165,12 @@ data_sub |> kable(format = "pipe", padding = 2, col.names = c("Subtype", "Arrest
 
 # Result
 
-## Crime rates graphed
-The aim of this paper is to analyse the arrest count from the year 2014 to 2022 which is why a bar graph was made with the values from the table seen above.
+## Arrest count by Year
+Lets look at the first independent variable, year, and see how it correlates to number of arrests made
 ```{r}
 #| echo: false
-#| label: arrest/year
-#| fig-cap: Realting arrest count with arrest 
+#| label: fig-year
+#| fig-cap: Number of arrest in correlation to year
 ggplot(data_year, aes(x = arrest_year, y = arrest_count)) +
   geom_bar(stat = "identity") +
   labs(title = "Number of arrests in Toronto (2014-2022)",
@@ -181,6 +181,55 @@ ggplot(data_year, aes(x = arrest_year, y = arrest_count)) +
 
 ```
 We notice from the graph above that there is a steady decline from 2019 to 2021 until 2022 when it starts to slowly increase again. Notice that in 2014 we start off with a very large arrest count, 80859 arrests made in 2014. However, the years after ward we decrease to 71480 people arrested and it stays constant for a 3 years until we end up in 2018 and 2019 where it decreases again to make the total number of arrests to approximately, 67000 people. In 2020, the graph shows a local minimum where 53180 people were arrested. After the 2020 mark we see gradual increase in 2021 and 2022 with 54532 and 64243 people being arrested per year respectively. 
+
+## Arrest count by Division
+There are 16 divisions in the city of Toronto. They all have multiple police offices in each division but each division has their own head. The table (@fig-div) graphs to see if the geographical location of division has any correlation with the number of arrests.
+```{r}
+#| echo: false
+#| label: fig-div
+#| fig-cap: Number of arrest in correlation to geography or division
+ggplot(data_div, aes(x = division, y = arrest_count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Number of arrests in Toronto by Division",
+       x = "Division",
+       y = "Number of Arrested Persons") +
+  theme_minimal()
+
+```
+NSA as mentioned above may be the arrests made in toronto of a Torontonian but it was not made by a Toronto Police division. An educated guess maybe some other police such as the provincial police (OPP) or other district polices like (Peel). This paper will ignore this data as this seems like a outlier data; this data is an unique case that doesn't add to the analysis the paper is aiming to do. Shown in @fig-div division 33 seems to have the lowest arrest rates and the highest is district 51. The median of this dataset seems to be district 14 with 44,866 arrest together throughout the years 2014 to 2022. 
+
+
+
+## Arrest count by Category and Subtype
+As explained above each arrest is made with a charge and @fig-cat  will show the data of  @tbl-cat . 
+```{r}
+#| echo: false
+#| label: fig-cat
+#| fig-cap: The different charges graphed against the number of people who got arrested for them 
+
+ggplot(data_cat, aes(x = category, fill = subtype)) +
+  geom_bar() +
+  labs(title = "Number of arrests in Toronto by Charge Category",
+       x = "Charge",
+       y = "Number of Arrested Persons", 
+       fill = "Subtypes") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 20, vjust = 1, hjust = 1, size = 6),
+        axis.text.y = element_text(size = 5),
+        legend.position = "bottom", 
+        legend.key.size = unit(0.10, "cm"), 
+        legend.spacing.x =  unit(0, "cm"),
+        plot.title = element_text(size = 8)) +  
+  scale_x_discrete(expand = c(0, 0)) +
+  guides(fill = guide_legend(nrow = 7))  
+
+
+
+```
+This graph shows that Crimes Against Another Person was the largest charge afflicted on a Torontonian in the years 2014 to 2022. The least was Other Federal Statute Violations. The three most charges that were handed out was Crimes against Person or Property and Other criminal violations. We also notice that within Crimes against another person the highest sub type is assault. We also notice that there is no other section in the charge Possession of Drugs as that is straight forward. And Other Federal Statute Violations has the lowest arrest rate with 28 arrests made in 8 years. Other Criminal Code Violations charges section has quite a few arrests specially in the Other and Firearms related section. The data also shows that Driving Impared and Dangerous driving has 1386 and  5782 arrest respectivly, which doesn't seem bad since its over 8 years however, it's data only for the city of Toronto.
+
+
+
 
 ## Quantitative Analysis
 We will be taking the average rate of change to calulate the rate of change of crime rates for each year. The units are number of crimes/per year
@@ -208,6 +257,10 @@ We see that the rate of change shows the trend described in previous section. Wh
 
 ## Discussion
 First we will analyse the graph. From the graph and table above it can be seen that the number of arrest count starts of very high in 2014. This it relatively stays the same until 2019 and more evidently in 2020 with #. This data reveals that the decrease was coincidentally during covid 19 pandemic. This was time where lock down and staying home was mandatory or strongly advised. This pandemic striked a fear in Torontonians hence people could not leave home. This can be a reason as to why the number was so low. From the rate of change table above we see that the highest rate of change is during the years 2019-2020 where we have a decrease of 13208 arrests that year. 
+
+This paper also highlights that every district has a different crime rate then the other even thought they are part of the same Toronto Police Service. This could mean 2 things. Divisions such as 33 may be safer or the crimes commited are not arrest worthy. Similar analysis with Division 51 where the crime rates are higher. Another hypothesis was that the farther populated area one goes into the more the crime. This is  true as Division 51 is considered downtown Toronto and, Division 33 is more into the suburban areas. Further analysis on this topic would be to graph divisions with respect to the charge to see if there is a specicf type of crime commited in suburban areas vs the type of crimes commited in downtown Toronto. 
+
+The last independent variable that this paper covers is the type of charge vs the count. The most notable discussion is the fact the assult seems to be one of largest reasons people get arrested in Toronto. With a large city that recently legalized cannabis, one would expect that the drug related charges will increase. In future studies this may be a topic; relating the charge to each year to see if there is a trend in the number of arrests made towards a specific charge in Toronto. 
 
 One may also say that the increase in 911 emergency response time may contribute to the statistic above. According to CTV news, Torontonians are not getting the emergency services like security from the Toronto police department in time [@responceTime]. It is unclear from this data set whether the rise in crime rates influence the response time or if the slow response time results in a higher crime rate as police assistance is not there to deescalate a situation leading to larger charges and more arrests. 
 
